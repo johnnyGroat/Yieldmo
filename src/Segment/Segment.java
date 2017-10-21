@@ -1,3 +1,4 @@
+package Segment;
 
 public class Segment {
 	private int startTime;
