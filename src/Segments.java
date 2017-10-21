@@ -2,12 +2,13 @@ import java.util.ArrayList;
 
 public class Segments {
 	private int latestStartTime;
-	private int latestEndTime;
 	
-	private ArrayList<Segment> timeDiff;
+	private ArrayList<Segment> output;
+	private ArrayList<Segment> input;
 	
 	public Segments() {
-		timeDiff = new ArrayList<Segment>();
+		input = new ArrayList<Segment>();
+		output = new ArrayList<Segment>();
 	}
 	
 	public void addSegment(Segment td) {
@@ -15,11 +16,19 @@ public class Segments {
 		if (!validSegment(td)) {
 			return;
 		}
-		timeDiff.add(td);
-		
-		if (getTimeDiffSize() == 1) {
+		input.add(td);
+		// latest start/end times dependent on more than one item in the collection
+		if (getInputSize() == 1) {
 			latestStartTime = td.getStartTime();
-			latestEndTime = td.getEndTime();
+			return;
+		}
+		
+		Segment previous = input.get(getInputSize() - 2);
+		
+		if (Math.abs(previous.getEndTime() - td.getStartTime()) <= 5) {
+			output.add(new Segment(latestStartTime, td.getEndTime()));
+			// reset input since we meet criteria
+			input = new ArrayList<Segment>();
 		}
 	}
 	
@@ -31,7 +40,11 @@ public class Segments {
 		return true;
 	}
 	
-	public int getTimeDiffSize() {
-		return timeDiff.size();
+	public int getInputSize() {
+		return input.size();
+	}
+	
+	public ArrayList<Segment> getOuputSegment() {
+		return output;
 	}
 }
